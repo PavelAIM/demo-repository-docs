@@ -1,7 +1,7 @@
 # 🛠️ Установка Docker и Docker Compose
 Установка Docker
 Выполните следующие команды для установки Docker:
-'''bash
+```bash
 # Обновление системы
 sudo apt update
 sudo apt upgrade -y
@@ -18,9 +18,10 @@ sudo usermod -aG docker $USER
 
 # Применение изменений группы
 newgrp docker
-'''
+```
 Проверка установки
-'''bash
+
+```bash
 
 # Проверка версии Docker
 docker --version
@@ -30,7 +31,7 @@ docker-compose --version
 
 # Тестовый запуск
 docker run hello-world
-'''
+```
 
 
 
