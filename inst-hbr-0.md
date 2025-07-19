@@ -15,7 +15,30 @@
 - Установленные Docker и Docker Compose
 - Порт 3000 (по умолчанию) должен быть доступен во внутренней сети
   
-  [подробнее тут](https://github.com/open-webui/open-webui/discussions/736#discussioncomment-8474297) 
+  [подробнее тут](https://github.com/open-webui/open-webui/discussions/736#discussioncomment-8474297)
+
+
+  <details>
+  <summary>Windows</summary>
+```bat
+  echo Hello from Windows!
+```
+</details> 
+
+<details> 
+<summary>macOS</summary>
+
+```bat
+echo "Hello from macOS!"
+</details>
+```
+ <details> 
+   <summary>Linux</summary>
+   
+```bat
+echo "Hello from Linux!"
+```
+</details> 
   
 # Step-by-step инструкция по установке OpenWebUI
 
