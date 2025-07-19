@@ -18,11 +18,12 @@
   [подробнее тут](https://github.com/open-webui/open-webui/discussions/736#discussioncomment-8474297)
 
 
-  <details>
-  <summary>Windows</summary>
+<details>
+<summary>Windows</summary>
   
 ```bat
   echo Hello from Windows!
+
 ```
 
 </details> 
