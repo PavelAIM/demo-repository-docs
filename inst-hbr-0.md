@@ -15,7 +15,7 @@
 - Установленные Docker и Docker Compose
 - Порт 3000 (по умолчанию) должен быть доступен во внутренней сети
   
-  [‼️TODO‼️] Ссылка на детальный минимальные требования
+  [подробнее тут](https://github.com/open-webui/open-webui/discussions/736#discussioncomment-8474297) 
   
 # Step-by-step инструкция по установке OpenWebUI
 
