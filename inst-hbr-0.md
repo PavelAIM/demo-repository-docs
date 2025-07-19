@@ -181,6 +181,14 @@ mkdir ~/openwebui
 cd ~/openwebui
 ```
 
+<details> <summary>📄 Show Output</summary>
+  
+```console
+# no output 
+```
+  
+</details> 
+
 ## Шаг 3. Создайте файл docker-compose.yml с минимальной конфигурацией
 
 Создайте файл с именем docker-compose.yml и вставьте в него:
@@ -205,15 +213,51 @@ EOF
 
 # Проверить, что файл создался
 ls -la docker-compose.yml
-# увидите: 
-# -rw-rw-r-- 1 ubuntu docker 258 Jul 19 14:37 docker-compose.yml
 ```
+
+<details> <summary>📄 Show Output</summary>
+  
+```console
+-rw-rw-r-- 1 ubuntu docker 258 Jul 19 14:37 docker-compose.yml
+```
+  
+</details> 
+
 
 ## Шаг 4. Запустите контейнер
 
 ```bash
 docker-compose up -d
 ```
+
+<details> <summary>📄 Show Output</summary>
+  
+```console
+Creating network "openwebui_default" with the default driver
+Creating volume "openwebui_openwebui-data" with default driver
+Pulling openwebui (ghcr.io/open-webui/open-webui:latest)...
+latest: Pulling from open-webui/open-webui
+3da95a905ed5: Pull complete
+483d0dd37518: Pull complete
+02a5d22e0d6f: Pull complete
+471797cdda8c: Pull complete
+d735c6810219: Pull complete
+4f4fb700ef54: Pull complete
+eb54bd960342: Pull complete
+1e80ef81ce95: Pull complete
+dc06c47d3f8d: Pull complete
+b055ad624eb2: Pull complete
+7748b270741b: Pull complete
+b22bc807a44a: Pull complete
+93ac078ec3dd: Pull complete
+b7c32b689474: Pull complete
+07aa94a3888a: Pull complete
+Digest: sha256:bebab5869f7964143b7189e6b890e571f1553c428af6d3afb77bf25c9e0cc582
+Status: Downloaded newer image for ghcr.io/open-webui/open-webui:latest
+Creating openwebui ... done
+```
+  
+</details> 
 
 ## Шаг 5. Откройте веб-интерфейс
 
@@ -224,6 +268,45 @@ docker-compose up -d
 ```bash
 # Показать все сетевые интерфейсы
 ip addr show
+```
+
+<details> <summary>📄 Show Output</summary>
+  
+```console
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 52:54:00:24:e0:65 brd ff:ff:ff:ff:ff:ff
+    altname enp0s3
+    inet 192.168.64.2/24 metric 100 brd 192.168.64.255 scope global dynamic ens3
+       valid_lft 80989sec preferred_lft 80989sec
+    inet6 fdf4:ff6e:943d:451d:5054:ff:fe24:e065/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 2591926sec preferred_lft 604726sec
+    inet6 fe80::5054:ff:fe24:e065/64 scope link 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:ab:c1:76:b1 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+4: br-c8c39ab07966: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether 02:42:76:d8:8e:9e brd ff:ff:ff:ff:ff:ff
+    inet 172.18.0.1/16 brd 172.18.255.255 scope global br-c8c39ab07966
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:76ff:fed8:8e9e/64 scope link 
+       valid_lft forever preferred_lft forever
+6: veth64026f0@if5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br-c8c39ab07966 state UP group default 
+    link/ether 76:d7:a2:11:c5:12 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::74d7:a2ff:fe11:c512/64 scope link 
+       valid_lft forever preferred_lft forever
+```
+  
+</details> 
+
+```shell
 # Что искать в выводе:
 #  ...
 # 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
