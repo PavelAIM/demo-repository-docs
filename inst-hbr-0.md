@@ -30,14 +30,17 @@
 
 ## Шаг 1. Установите Docker и Docker Compose
 
-```bash
+```shell
 sudo apt update
 sudo apt install -y docker.io docker-compose
 sudo systemctl enable docker
 sudo usermod -aG docker $USER
 newgrp docker
 ```
-```text
+
+<details> <summary>📄 Show Output</summary>
+  
+```console
 Hit:1 http://security.ubuntu.com/ubuntu noble-security InRelease
 Hit:2 http://archive.ubuntu.com/ubuntu noble InRelease
 Get:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
@@ -168,6 +171,8 @@ No user sessions are running outdated binaries.
 
 No VM guests are running outdated hypervisor (qemu) binaries on this host.
 ```
+
+</details> 
 
 ## Шаг 2. Создайте рабочую директорию
 
