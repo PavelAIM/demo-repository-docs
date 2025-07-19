@@ -68,7 +68,8 @@ cd ~/openwebui
 
 Создайте файл с именем docker-compose.yml и вставьте в него:
 
-```yaml
+```bash
+cat > docker-compose.yml << 'EOF'
 version: '3.8'
 
 services:
@@ -83,6 +84,7 @@ services:
 
 volumes:
   openwebui-data:
+EOF
 ```
 
 ## Шаг 4. Запустите контейнер
