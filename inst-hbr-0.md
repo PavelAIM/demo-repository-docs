@@ -20,9 +20,11 @@
 
   <details>
   <summary>Windows</summary>
+  
 ```bat
   echo Hello from Windows!
 ```
+
 </details> 
 
 <details> 
@@ -30,14 +32,16 @@
 
 ```bat
 echo "Hello from macOS!"
-</details>
+
 ```
+</details>
  <details> 
    <summary>Linux</summary>
    
 ```bat
 echo "Hello from Linux!"
 ```
+
 </details> 
   
 # Step-by-step инструкция по установке OpenWebUI
