@@ -88,6 +88,8 @@ EOF
 
 # Проверить, что файл создался
 ls -la docker-compose.yml
+# увидите: 
+# -rw-rw-r-- 1 ubuntu docker 258 Jul 19 14:37 docker-compose.yml
 ```
 
 ## Шаг 4. Запустите контейнер
