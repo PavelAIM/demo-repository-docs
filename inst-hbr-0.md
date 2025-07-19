@@ -85,6 +85,9 @@ services:
 volumes:
   openwebui-data:
 EOF
+
+# Проверить, что файл создался
+ls -la docker-compose.yml
 ```
 
 ## Шаг 4. Запустите контейнер
