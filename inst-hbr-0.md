@@ -19,7 +19,7 @@
   
 # Step-by-step инструкция по установке OpenWebUI
 
-## Шаг 1. Установите Docker и Docker Compose (если еще не установлены)
+## Шаг 1. Установите Docker и Docker Compose
 
 ```bash
 sudo apt update
