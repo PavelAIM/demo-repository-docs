@@ -592,6 +592,7 @@ docker exec -i openwebui-postgres psql -U openwebui_user openwebui < backup_2024
 #### **Вариант настройки: Корпоративная SSO через OAuth (docker-compose)**
 
 <details><summary>Посмотреть…</summary>
+  
 **Создание файла с секретами:**
 
 ```bash
