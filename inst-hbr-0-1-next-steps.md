@@ -921,6 +921,7 @@ Enable Message Rating / Включить оценку сообщений: ❌ DI
 JWT Token Expiration / Срок действия JWT-токена: 2w
 └── Баланс между безопасностью и удобством (перелогин раз в 2 недели)
 </details>
+
 #### Шаг 2: Подключение к AI-сервисам (Settings → Connections / Настройки → Подключения)
 
 <details><summary>Посмотреть…</summary>
@@ -932,6 +933,7 @@ Ollama API: ❌ DISABLED
 </details>
 
 #### Шаг 3: Настройка моделей (Settings → Models / Настройки → Модели)
+
 <details><summary>Посмотреть…</summary>
 Конфигурация моделей:
 
@@ -980,6 +982,7 @@ Max Count / Максимальное количество: 5 Documents
 </details>
 
 #### Шаг 6: Интерфейс (Settings → Interface / Настройки → Интерфейс)
+
 <details><summary>Посмотреть…</summary>
   
 Set Task Model / Установить модель для задач → External Models / Внешние модели: "gpt-4o-mini"
