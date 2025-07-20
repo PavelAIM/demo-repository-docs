@@ -263,6 +263,301 @@ volumes:
 - Интеграцию с Prometheus/Grafana для метрик
 - Централизованное логирование через ELK Stack или Loki
 
+
+Отличная идея! PostgreSQL для корпоративного использования действительно важен. Это логично добавить как **точку расширения 3.4** в рамках создания docker-compose.yml, поскольку требует изменения архитектуры и конфигурации системы.
+
+---
+
+### 📌 Точка расширения 3.4: Настройка внешней базы данных (PostgreSQL)
+
+**Зачем это нужно:**
+- **Производительность**: PostgreSQL значительно быстрее SQLite при множественных одновременных подключениях (>10 пользователей)
+- **Масштабируемость**: Возможность горизонтального масштабирования и кластеризации
+- **Резервное копирование**: Профессиональные инструменты бэкапа и восстановления данных
+- **Высокая доступность**: Репликация и failover для критически важных систем
+- **Корпоративные стандарты**: Интеграция с существующей инфраструктурой БД и политиками безопасности
+- **Совместное использование**: Несколько инстансов OpenWebUI могут использовать одну БД
+
+**Когда использовать:**
+- ✅ Больше 10-15 одновременных пользователей
+- ✅ Критически важные данные чатов
+- ✅ Необходимость профессионального бэкапа
+- ✅ Планы масштабирования
+- ❌ Для тестирования или малых команд (до 5 человек) достаточно SQLite
+
+**Варианты использования и настройки:**
+- Вариант A: PostgreSQL в том же docker-compose (простой)
+- Вариант B: Расширенная конфигурация PostgreSQL (продакшен)
+- Вариант C: Подключение к внешней PostgreSQL (существующая корпоративная БД):
+- 
+**Рекомендации по выбору:**
+| Размер команды | Рекомендация |
+|----------------|-------------|
+| 1-5 пользователей | SQLite (по умолчанию) |
+| 5-20 пользователей | PostgreSQL в Docker (Вариант A) |
+| 20+ пользователей | PostgreSQL продакшен (Вариант B) |
+| Корпоративная среда | Внешняя PostgreSQL (Вариант C) |
+
+#### **Вариант A: PostgreSQL в том же docker-compose (простой)**
+<details><summary>Посмотреть...</summary></summary>
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: openwebui-postgres
+    environment:
+      POSTGRES_DB: openwebui
+      POSTGRES_USER: openwebui_user
+      POSTGRES_PASSWORD: your_secure_password_here
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    # Опционально: ограничить доступ только от OpenWebUI
+    networks:
+      - openwebui-network
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "127.0.0.1:3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      # Подключение к PostgreSQL
+      - DATABASE_URL=postgresql://openwebui_user:your_secure_password_here@postgres:5432/openwebui
+      - WEBUI_URL=https://openwebui.company.local
+    networks:
+      - openwebui-network
+
+volumes:
+  openwebui-data:
+  postgres-data:
+
+networks:
+  openwebui-network:
+    driver: bridge
+```
+
+</details>
+
+#### **Вариант B: Расширенная конфигурация PostgreSQL (продакшен)**
+
+<details><summary>Посмотреть...</summary></summary>
+
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: openwebui-postgres
+    environment:
+      POSTGRES_DB: openwebui
+      POSTGRES_USER: openwebui_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      # Настройки производительности
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=ru_RU.UTF-8"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d/:ro
+    restart: unless-stopped
+    networks:
+      - openwebui-network
+    # Настройки производительности
+    command: >
+      postgres
+      -c max_connections=100
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+    # Мониторинг здоровья
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openwebui_user -d openwebui"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Бэкап PostgreSQL (опционально)
+  postgres-backup:
+    image: postgres:15-alpine
+    container_name: openwebui-backup
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_USER: openwebui_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: openwebui
+    volumes:
+      - ./backups:/backups
+    networks:
+      - openwebui-network
+    # Запуск только для бэкапа (не постоянный сервис)
+    restart: "no"
+    entrypoint: |
+      bash -c '
+      set -e
+      echo "Waiting for postgres..."
+      while ! pg_isready -h postgres -U openwebui_user; do
+        sleep 1
+      done
+      echo "Creating backup..."
+      pg_dump -h postgres -U openwebui_user -d openwebui > /backups/openwebui-$$(date +%Y%m%d_%H%M%S).sql
+      echo "Backup completed"
+      '
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "127.0.0.1:3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Подключение к PostgreSQL с connection pooling
+      - DATABASE_URL=postgresql://openwebui_user:your_secure_password_here@postgres:5432/openwebui?sslmode=prefer&connect_timeout=10
+      - WEBUI_URL=https://openwebui.company.local
+    networks:
+      - openwebui-network
+
+volumes:
+  openwebui-data:
+  postgres-data:
+    # Опционально: использовать внешний volume для бэкапов
+    driver: local
+    driver_opts:
+      type: none
+      device: /opt/openwebui/postgres-data
+      o: bind
+
+networks:
+  openwebui-network:
+    driver: bridge
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+```
+
+#### **Создание файла с паролем (для безопасности):**
+
+```bash
+# Создать директорию для секретов
+mkdir -p secrets
+
+# Создать файл с паролем (сгенерировать случайный)
+openssl rand -base64 32 > secrets/postgres_password.txt
+chmod 600 secrets/postgres_password.txt
+
+# Для простой конфигурации можно использовать переменную окружения
+echo "DATABASE_PASSWORD=$(openssl rand -base64 32)" >> .env
+```
+</details>
+
+
+
+#### **Вариант C: Подключение к внешней PostgreSQL (существующая корпоративная БД):**
+
+<details><summary>Посмотреть...</summary></summary>
+
+```yaml
+version: '3.8'
+
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "127.0.0.1:3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+    environment:
+      # Подключение к внешней PostgreSQL
+      - DATABASE_URL=postgresql://openwebui_user:${DB_PASSWORD}@db.company.local:5432/openwebui?sslmode=require
+      - WEBUI_URL=https://openwebui.company.local
+
+volumes:
+  openwebui-data:
+```
+
+#### **Настройка PostgreSQL на стороне DBA:**
+
+```sql
+-- Создание пользователя и базы данных
+CREATE USER openwebui_user WITH ENCRYPTED PASSWORD 'secure_password';
+CREATE DATABASE openwebui OWNER openwebui_user;
+GRANT ALL PRIVILEGES ON DATABASE openwebui TO openwebui_user;
+
+-- Для безопасности: ограничения подключений
+ALTER USER openwebui_user CONNECTION LIMIT 20;
+```
+
+#### **Миграция с SQLite на PostgreSQL:**
+
+```bash
+# 1. Остановить OpenWebUI
+docker-compose down
+
+# 2. Экспортировать данные из SQLite (если есть)
+# (OpenWebUI автоматически создаст схему в PostgreSQL)
+
+# 3. Обновить docker-compose.yml с PostgreSQL
+
+# 4. Запустить с новой конфигурацией
+docker-compose up -d
+
+# 5. Проверить логи
+docker logs openwebui
+docker logs openwebui-postgres
+```
+
+#### **Мониторинг и обслуживание:**
+
+```bash
+# Проверить статус БД
+docker exec openwebui-postgres pg_isready -U openwebui_user
+
+# Посмотреть размер БД
+docker exec openwebui-postgres psql -U openwebui_user -d openwebui -c "
+SELECT 
+    schemaname,
+    tablename,
+    attname,
+    n_distinct,
+    most_common_vals
+FROM pg_stats 
+WHERE schemaname = 'public';"
+
+# Создать бэкап вручную
+docker exec openwebui-postgres pg_dump -U openwebui_user openwebui > backup_$(date +%Y%m%d).sql
+
+# Восстановить из бэкапа
+docker exec -i openwebui-postgres psql -U openwebui_user openwebui < backup_20241201.sql
+```
+
+</details>
+
+---
+
+Эта точка расширения логично вписывается в 3.4, поскольку изменяет архитектуру системы и требует модификации docker-compose.yml. Что думаешь?
+
 ---
 
 ## Шаг 4. Запуск контейнера
