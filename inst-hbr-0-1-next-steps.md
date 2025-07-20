@@ -1031,7 +1031,7 @@ Prompts Access / Доступ к промптам: ✅ ENABLED
 
 <details><summary>Посмотреть…</summary>
 Создание специализированных вариантов моделей:
-
+    
 Например:
 ├── "Claude 3.7 Sonnet Thinking High"
 │ └── Базовая модель + высокий уровень reasoning effort
@@ -1041,6 +1041,19 @@ Prompts Access / Доступ к промптам: ✅ ENABLED
 └── Специализированная настройка для анализа данных
 
 Настройка reasoning_effort / уровня рассуждений: "low" | "medium" | "high"
+```bash
+Создание специализированных вариантов моделей:
+    
+Например:
+├── "Claude 3.7 Sonnet Thinking High"
+│ └── Базовая модель + высокий уровень reasoning effort
+├── "GPT-4o-mini High Reasoning"
+│ └── Экономная модель с усиленными рассуждениями
+└── "Gemini 2.5 Analysis Mode"
+└── Специализированная настройка для анализа данных
+
+Настройка reasoning_effort / уровня рассуждений: "low" | "medium" | "high"
+```
 </details>
 
 
