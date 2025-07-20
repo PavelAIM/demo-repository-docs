@@ -85,7 +85,7 @@ docker run hello-world
 **Безопасность:** 
 ⚠️ **Низкая** - участники группы `docker` фактически имеют root-доступ к системе
 
-## 🥇 **Rootless mode (настоящая безопасность)**
+## 🥇 **Rootless mode (настоящая безопасность)** [документация](https://docs.docker.com/engine/security/rootless/)
 
 **Что это:**
 ```bash
@@ -310,6 +310,258 @@ volumes:
 - Настройку WAF (Web Application Firewall)
 - Rate limiting для защиты от злоупотреблений
 
+
+Отлично! Вот обновленная точка расширения 5.2 с добавлением Caddy:
+
+---
+
+### 📌 Точка расширения 5.2: HTTPS и обратный прокси
+
+**Зачем это нужно:**
+- **Безопасность передачи данных**: Шифрование трафика для защиты конфиденциальных запросов к AI
+- **Соответствие политикам**: Многие компании требуют HTTPS для всех внутренних сервисов
+- **Интеграция с инфраструктурой**: Использование корпоративных сертификатов и load balancer'ов
+- **Производительность**: Кеширование, сжатие, rate limiting для защиты от злоупотреблений
+- **Удобство доступа**: Красивый URL вместо IP:порт (https://ai.company.com вместо http://192.168.1.100:3000)
+
+**Варианты реализации:**
+- Вариант A: Caddy (рекомендуется для простоты)
+- Вариант B: Nginx (для существующей инфраструктуры)
+  
+| Критерий | Caddy | Nginx |
+|----------|-------|-------|
+| **Простота настройки** | ✅ Очень простая | ⚠️ Требует опыта |
+| **Автоматический HTTPS** | ✅ Встроено | ❌ Нужен certbot |
+| **Производительность** | ✅ Хорошая | ✅ Отличная |
+| **Гибкость** | ✅ Достаточная | ✅ Максимальная |
+| **Корпоративная поддержка** | ✅ Есть | ✅ Отлична |
+| **Потребление ресурсов** | ✅ Низкое | ✅ Очень низкое |
+
+**Рекомендация:** Для быстрого внедрения используйте **Caddy**, для максимального контроля и интеграции с существующей инфраструктурой — **Nginx**.
+
+#### **Вариант A: Caddy (рекомендуется для простоты)**
+<details><summary>Посмотреть...</summary>
+
+**Установка Caddy:**
+```bash
+# Ubuntu/Debian
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update && sudo apt install caddy
+```
+
+**Минимальная конфигурация Caddyfile:**
+```bash
+# Создать конфигурацию
+sudo nano /etc/caddy/Caddyfile
+
+# Содержимое файла:
+openwebui.company.local {
+    reverse_proxy localhost:3000
+}
+```
+
+**Расширенная корпоративная конфигурация:**
+```caddy
+openwebui.company.local {
+    # Использование корпоративных сертификатов
+    tls /etc/ssl/certs/company.crt /etc/ssl/private/company.key
+    
+    # Или автоматические Let's Encrypt (для внешних доменов)
+    # tls your-email@company.com
+
+    # Ограничение доступа по IP
+    @internal_only {
+        remote_ip 192.168.1.0/24 10.0.0.0/8
+    }
+    handle @internal_only {
+        # Заголовки безопасности
+        header {
+            X-Frame-Options DENY
+            X-Content-Type-Options nosniff
+            X-XSS-Protection "1; mode=block"
+            Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        }
+
+        # Логирование
+        log {
+            output file /var/log/caddy/openwebui.log {
+                roll_size 10MiB
+                roll_keep 5
+            }
+            format json
+        }
+
+        # Rate limiting (защита от злоупотреблений)
+        rate_limit {
+            zone dynamic {
+                key {remote_host}
+                events 20
+                window 1m
+            }
+        }
+
+        # Reverse proxy с настройками для AI
+        reverse_proxy localhost:3000 {
+            # Увеличенные таймауты для длинных ответов AI
+            transport http {
+                dial_timeout 60s
+                response_header_timeout 300s
+            }
+            
+            # Передача реального IP
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Блокировка внешних IP
+    handle {
+        respond "Access denied" 403
+    }
+}
+```
+
+**Запуск Caddy:**
+```bash
+# Проверить конфигурацию
+sudo caddy validate --config /etc/caddy/Caddyfile
+
+# Запустить и включить автозагрузку
+sudo systemctl enable caddy
+sudo systemctl start caddy
+sudo systemctl status caddy
+```
+</details>
+
+#### **Вариант B: Nginx (для существующей инфраструктуры)**
+
+<details><summary>Посмотреть...</summary>
+  
+**Установка и базовая настройка:**
+```bash
+# Установка
+sudo apt install nginx
+
+# Создание конфигурации
+sudo nano /etc/nginx/sites-available/openwebui
+```
+
+**Конфигурация Nginx:**
+```nginx
+# Редирект HTTP на HTTPS
+server {
+    listen 80;
+    server_name openwebui.company.local;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name openwebui.company.local;
+
+    # SSL сертификаты
+    ssl_certificate /etc/ssl/certs/company.crt;
+    ssl_certificate_key /etc/ssl/private/company.key;
+    
+    # Современные SSL настройки
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    # Ограничение по IP (корпоративная сеть)
+    allow 192.168.1.0/24;
+    allow 10.0.0.0/8;
+    deny all;
+
+    # Безопасность заголовков
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+    # Rate limiting
+    limit_req_zone $binary_remote_addr zone=openwebui:10m rate=10r/m;
+    limit_req zone=openwebui burst=20 nodelay;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Таймауты для AI
+        proxy_read_timeout 300s;
+        proxy_send_timeout 60s;
+    }
+
+    access_log /var/log/nginx/openwebui_access.log;
+    error_log /var/log/nginx/openwebui_error.log;
+}
+```
+
+**Активация Nginx:**
+```bash
+sudo ln -s /etc/nginx/sites-available/openwebui /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+#### **Обновление docker-compose.yml для работы с proxy:**
+
+```yaml
+version: '3.8'
+
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "127.0.0.1:3000:8080"  # Привязка только к localhost
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+    environment:
+      - WEBUI_URL=https://openwebui.company.local
+
+volumes:
+  openwebui-data:
+```
+
+#### **Настройка DNS и сертификатов:**
+
+```bash
+# Добавить запись в /etc/hosts (временно для тестирования)
+echo "127.0.0.1 openwebui.company.local" | sudo tee -a /etc/hosts
+
+# Или в корпоративном DNS создать A-запись:
+# openwebui.company.local -> IP-сервера
+
+# Разместить корпоративные сертификаты
+sudo cp company.crt /etc/ssl/certs/
+sudo cp company.key /etc/ssl/private/
+sudo chmod 600 /etc/ssl/private/company.key
+```
+
+#### **Проверка работы:**
+
+```bash
+# Проверить доступность
+curl -I https://openwebui.company.local
+
+# Проверить SSL
+echo | openssl s_client -connect openwebui.company.local:443 2>/dev/null | openssl x509 -noout -dates
+
+# Проверить логи
+sudo tail -f /var/log/caddy/openwebui.log
+# или для Nginx:
+sudo tail -f /var/log/nginx/openwebui_access.log
+```
+</details>
+  
 ### 📌 Точка расширения 5.3: Интеграция с корпоративными системами
 **Зачем это нужно:**
 - **Автоматизация рабочих процессов**: Подключение к CRM, ERP, системам документооборота
