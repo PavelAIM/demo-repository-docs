@@ -588,6 +588,90 @@ docker exec -i openwebui-postgres psql -U openwebui_user openwebui < backup_2024
 - Отключение самостоятельной регистрации: `ALLOW_REGISTRATION=false`
 - Настройку ролевой модели (admin, moderator, user)
 
+
+#### **Вариант настройки: Корпоративная SSO через OAuth (docker-compose)**
+
+<details><summary>Посмотреть…</summary>
+**Создание файла с секретами:**
+
+```bash
+# Создать файл .env для безопасного хранения секретов
+cat > .env << 'EOF'
+OAUTH_CLIENT_SECRET=your-actual-secret-key-from-keycloak
+OPENID_PROVIDER_URL=https://auth.company.ru/realms/company-realm/.well-known/openid-configuration
+WEBUI_URL=https://ai.company.ru
+EOF
+
+# Защитить файл от чтения другими пользователями
+chmod 600 .env
+```
+
+**docker-compose.yml с OAuth аутентификацией:**
+
+```yaml
+version: '3.8'
+
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "127.0.0.1:3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - OAUTH_CLIENT_ID=openwebui
+      - OAUTH_SCOPES=openid email profile
+      - OAUTH_PROVIDER_NAME=Company SSO
+      - OAUTH_USERNAME_CLAIM=preferred_username
+      - OAUTH_EMAIL_CLAIM=email
+      - ENABLE_SIGNUP=false
+      - DEFAULT_USER_ROLE=pending
+      - OAUTH_ROLES_CLAIM=groups
+      - OAUTH_ADMIN_ROLES=openwebui-admin
+      - OAUTH_USER_ROLES=openwebui-user
+
+volumes:
+  openwebui-data:
+```
+
+**Пояснения по переменным окружения:**
+
+- **OAUTH_CLIENT_ID** - идентификатор приложения в вашем Identity Provider
+- **OAUTH_CLIENT_SECRET** - секретный ключ для аутентификации приложения  
+- **OPENID_PROVIDER_URL** - URL конфигурации OIDC провайдера
+- **OAUTH_SCOPES** - запрашиваемые разрешения (обычно "openid email profile")
+- **OAUTH_PROVIDER_NAME** - название кнопки входа в интерфейсе
+- **OAUTH_USERNAME_CLAIM** - поле для получения имени пользователя
+- **OAUTH_ROLES_CLAIM** - поле для получения ролей пользователя
+
+**Важное примечание:**
+
+OAuth авторизация в примере настроена через KeyCloak - но у вас может быть другой OAuth OIDC провайдер (например Azure AD, Google Workspace, Okta, Auth0). Так или иначе, нужны OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, и OPENID_PROVIDER_URL. Настроить OAuth клиент в вашем Identity Provider должен ваш главный администратор, отвечающий за домен аутентификации и интеграцию приложений.
+
+**Типичные URL для разных провайдеров:**
+
+- **KeyCloak:** `https://auth.company.com/realms/realm-name/.well-known/openid-configuration`
+- **Azure AD:** `https://login.microsoftonline.com/{tenant-id}/v2.0/.well-known/openid-configuration`
+- **Google:** `https://accounts.google.com/.well-known/openid-configuration`
+- **Okta:** `https://company.okta.com/.well-known/openid-configuration`
+
+**Проверка работы OAuth:**
+
+```bash
+# Проверить логи контейнера
+docker logs openwebui
+
+# Проверить доступность OIDC конфигурации
+curl https://auth.company.ru/realms/company-realm/.well-known/openid-configuration
+
+# Открыть OpenWebUI - должна появиться кнопка "Login with Company SSO"
+```
+</details>
+
 ---
 
 ### 📌 Точка расширения 5.2: HTTPS и обратный прокси
