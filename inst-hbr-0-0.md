@@ -429,7 +429,7 @@ AI-наставник для обучения и развития
 </summary>
 Если вам не терпится сразу попробовать настроенную модель в работе, то вы можете импортировать готовую модель из файла [openwebui-expert-model.json](--openwebui-expert-model.json)
 <figure>
-  <img src="img/expert-vs-pure-model.png" alt="Импорт конфигурации модели из json-файла">
+  <img src="img/import-models-from-json-small.png" alt="Импорт конфигурации модели из json-файла">
   <figcaption><strong>Рисунок 2.1:</strong>Импорт конфигурации модели из json-файла</figcaption>
 </figure>
 </details>
