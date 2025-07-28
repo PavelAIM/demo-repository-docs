@@ -1,0 +1,8 @@
+# Ignore specific files
+Детализация промпта
+
+# Common files to ignore
+.DS_Store
+*.log
+*.tmp
+*.temp 
