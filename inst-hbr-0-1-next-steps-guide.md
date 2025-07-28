@@ -150,7 +150,7 @@ sudo usermod -aG docker dockeruser
 # + настройка systemd сервиса от этого пользователя
 ```
 
-<details> <summary>Рекомендации для корпоративной среды<summary>
+<details> <summary>Рекомендации для корпоративной среды</summary>
 
 **Для быстрого тестирования:**
 - Используйте **Вариант A** (docker без sudo)
