@@ -6,3 +6,6 @@
 *.log
 *.tmp
 *.temp 
+
+# Ignore file_transformations folder
+file_transformations/ 
