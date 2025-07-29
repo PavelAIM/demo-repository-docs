@@ -193,22 +193,12 @@ sudo systemctl enable --now systemd-timesyncd
 1. Зарегистрируйте поддомен `ai.example.com`.  
 2. Спросите Эксперта:
 
-```text
-Сгенерируй docker-compose с Caddy, который:
-• проксирует ai.example.com → OpenWebUI:8080;
-• выпускает/обновляет Let’s Encrypt TLS;
-• пишет логи в ./logs.
-```
-
-3. Сохраните YAML, выполните `docker compose up -d`.  
-
-> **Рис. 2-4** (caddy-openwebui.png):  
-> Caddy + OpenWebUI с автоматическим TLS.
+[chat](chat-nginx-proxy.md)
 
 ---
 
 ## 2.6 Практика 3: скрипт «Типичная корп-инсталляция»
-
+## !!!Look at chatGPT!!!
 Поручите Эксперту собрать единый `install_corp_openwebui.sh`, который:
 
 * проверяет Docker/Compose;  
