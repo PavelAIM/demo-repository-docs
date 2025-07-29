@@ -185,7 +185,9 @@ sudo systemctl enable --now systemd-timesyncd
 ---
 
 ## 2.5 Практика 2: человекопонятный домен + HTTPS
+---
 
+---
 **Задача:** заменить `http://10.0.0.15:8080` на `https://ai.example.com`.
 
 1. Зарегистрируйте поддомен `ai.example.com`.  
