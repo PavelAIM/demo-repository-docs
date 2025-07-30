@@ -1,6 +1,6 @@
 # Ignore specific files
 Детализация промпта
-corp-install-config/
+
 
 # Common files to ignore
 .DS_Store
