@@ -151,36 +151,13 @@
 
 **Цель:** корректное время в контейнере и в логах OpenWebUI.
 
+
 **Шаги в чате**
 
-```text
-Сгенерируй скрипт для синхронизации времени через systemd-timesyncd
-на Ubuntu 22.04. Покажи, как проверить результат.
-```
-
-**Ожидаемый ответ Эксперта**  
-
-```text
-=== Резюме ===
-Настраиваем NTP через systemd-timesyncd.
-
-=== Скрипт ===
-sudo timedatectl set-timezone Europe/Moscow
-sudo apt update && sudo apt install -y systemd-timesyncd
-sudo systemctl enable --now systemd-timesyncd
-
-=== Тестирование ===
-1. timedatectl status   # NTP synchronized: yes
-2. journalctl -u systemd-timesyncd | tail
-
-=== Объяснение ===
-...
-
-=== Предупреждения ===
-Смена тайм-зоны влияет на логи и планировщики cron.
-```
-
-Проверьте `timedatectl status`. При ошибке — см. разд. 2.8.
+<figure>
+  <img src="img/t-1-2-system-time.png" alt="скрипт от эксперта с настройкой системного времени">
+  <figcaption><strong>Рисунок 2-4:</strong> скрипт от эксперта с настройкой системного времени</figcaption>
+</figure>
 
 ---
 
@@ -200,6 +177,8 @@ sudo systemctl enable --now systemd-timesyncd
 
 ## 2.6 Практика 3: скрипт «Типичная корп-инсталляция»
 ## !!!Look at chatGPT!!!
+## добавить MCP
+
 Поручите Эксперту собрать единый `install_corp_openwebui.sh`, который:
 
 * проверяет Docker/Compose;  
