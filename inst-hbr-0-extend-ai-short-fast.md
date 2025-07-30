@@ -193,6 +193,7 @@ sudo systemctl enable --now systemd-timesyncd
 1. Зарегистрируйте поддомен `ai.example.com`.  
 2. Спросите Эксперта:
 
+Сказать что эксперт сменился на Грошика. Приатачить json с настройками.
 [chat](chat-nginx-proxy.md)
 
 ---
