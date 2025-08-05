@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  openwebui:
+    environment:
+      - ENABLE_OAUTH=true
+      - ENABLE_OAUTH_SIGNUP=true
+      - OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    ports:
+      - "3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    restart: unless-stopped
+    networks:
+      - openwebui-network
+
+volumes:
+  openwebui-data:
+    driver: local
+
+networks:
+  openwebui-network:
+    driver: bridge 
