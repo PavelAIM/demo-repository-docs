@@ -299,7 +299,7 @@ Creating openwebui ... done
 4. **Сохраните настройки** и проверьте подключение
 
 <figure>
-  <img src="img/di-add-connection-only.png" alt="Тип подключения OpenAI API">
+  <img src="img/di-add-connection-openai-only.png" alt="Тип подключения OpenAI API">
   <figcaption><strong>Рисунок 3: </strong>Тип подключения: OpenAI-совместимый API ...</figcaption>
 </figure>
 

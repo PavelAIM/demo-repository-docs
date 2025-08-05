@@ -54,16 +54,20 @@ process_images() {
     # Find and process image references
     local image_count=0
     while IFS= read -r line; do
-        if [[ $line =~ !\[.*\]\(([^)]+)\) ]]; then
-            local image_path="${BASH_REMATCH[1]}"
-            local image_name=$(basename "$image_path")
-            
-            # Check if image exists
-            if [ -f "$image_path" ]; then
-                print_success "Найдено изображение: $image_name"
-                ((image_count++))
-            else
-                print_warning "Изображение не найдено: $image_path"
+        # Use grep to find image patterns instead of bash regex
+        if echo "$line" | grep -q "!\[.*\](.*)"; then
+            # Extract image path using sed
+            local image_path=$(echo "$line" | sed -n 's/.*!\[.*\](\([^)]*\)).*/\1/p')
+            if [ -n "$image_path" ]; then
+                local image_name=$(basename "$image_path")
+                
+                # Check if image exists
+                if [ -f "$image_path" ]; then
+                    print_success "Найдено изображение: $image_name"
+                    ((image_count++))
+                else
+                    print_warning "Изображение не найдено: $image_path"
+                fi
             fi
         fi
     done < "$temp_file"
