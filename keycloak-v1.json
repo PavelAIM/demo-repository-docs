@@ -1,0 +1,10 @@
+{
+  "realm": "openwebui",
+  "auth-server-url": "http://192.168.64.2:9090/",
+  "ssl-required": "external",
+  "resource": "openwebui-client",
+  "credentials": {
+    "secret": "yRUe5ZAmfcBKvshiYgdUy1p4RNZec8ZA"
+  },
+  "confidential-port": 0
+}
