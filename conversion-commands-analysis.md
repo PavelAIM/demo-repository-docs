@@ -16,33 +16,8 @@ Based on the repository analysis, the following file pairs represent export/tran
 
 ## Conversion Scripts Available
 
-### 1. `convert-to-docx.sh` (Basic Converter)
-**Created**: Commit `cf906f9` (Aug 5, 2025)
-**Purpose**: Basic Markdown to DOCX converter (limited image support)
-
-**Key Command Structure**:
-```bash
-pandoc "$input_file" \
-    -o "$output_file" \
-    --from markdown \
-    --to docx \
-    --extract-media="$media_dir" \
-    --standalone \
-    --wrap=none
-```
-
-**Usage**:
-```bash
-# Convert all markdown files
-./convert-to-docx.sh
-
-# Convert specific file
-./convert-to-docx.sh 1-2-4-https-caddy-keycloak.md
-```
-
-**Note**: This script has limited image handling capabilities.
-
-### 2. `simple-convert.sh` (Image-Compatible Converter) ⭐
+### 1. `simple-convert.sh` (Image-Compatible Converter) ⭐
+**Location**: Root directory
 **Created**: Commit `903126c` (Aug 5, 2025)
 **Purpose**: **ONLY script that properly handles images/pictures in markdown files**
 
@@ -72,9 +47,15 @@ pandoc "$html_file" \
 ./simple-convert.sh 1-2-4-https-caddy-keycloak.md
 ```
 
-### 3. `convert-with-images.sh` (Advanced Converter)
-**Created**: Commit `cf9069f` (Aug 5, 2025)
-**Purpose**: Advanced image processing and conversion
+### 2. Archived Scripts (in `bin/` directory)
+**Note**: These scripts have been moved to the `bin/` directory as they are no longer the primary choice:
+
+- **`bin/convert-to-docx.sh`** - Basic converter with limited image support
+- **`bin/convert-with-images.sh`** - Advanced converter (complex, not needed for basic use)
+
+**Why archived**: `simple-convert.sh` provides better image handling and is simpler to use.
+
+
 
 ## When Each Conversion Was Used
 
@@ -145,7 +126,7 @@ libreoffice --headless --convert-to docx 1-2-4-https-caddy-keycloak.md
 
 ### For Future Conversions
 1. **Use `simple-convert.sh`** for files with images/pictures (ONLY script that works with images)
-2. **Use `convert-to-docx.sh`** only for text-only markdown files
+2. **Use archived scripts** in `bin/` directory only if needed for specific use cases
 3. **Always test** conversion with images before committing
 4. **Keep both versions** in repository for different use cases
 
