@@ -37,7 +37,8 @@ Using git tools and your memory, we successfully restored the complete chronolog
 1. **`analyze-article-chronology.sh`** - Automated analysis script
 2. **`article-development-timeline.md`** - Complete chronological timeline
 3. **`article-relationships-diagram.md`** - Visual relationship diagrams
-4. **`CHRONOLOGY-SUMMARY.md`** - This summary document
+4. **`conversion-commands-analysis.md`** - Conversion commands and workflow analysis
+5. **`CHRONOLOGY-SUMMARY.md`** - This summary document
 
 ## How to Use This Information
 
@@ -64,6 +65,7 @@ git show <commit>:<filename>
 2. **Git history confirms everything** - We can trace every change and split
 3. **The repository is well-organized** - Articles were logically separated for better usability
 4. **Future maintenance is easier** - Each file has a focused purpose
+5. **Conversion workflow documented** - We identified the exact commands used to create .docx exports
 
 ## Next Steps
 
