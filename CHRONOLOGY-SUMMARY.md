@@ -66,6 +66,7 @@ git show <commit>:<filename>
 3. **The repository is well-organized** - Articles were logically separated for better usability
 4. **Future maintenance is easier** - Each file has a focused purpose
 5. **Conversion workflow documented** - We identified the exact commands used to create .docx exports
+6. **Image handling clarified** - `./simple-convert.sh` is the ONLY script that works with images/pictures
 
 ## Next Steps
 

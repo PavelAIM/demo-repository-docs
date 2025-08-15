@@ -16,9 +16,9 @@ Based on the repository analysis, the following file pairs represent export/tran
 
 ## Conversion Scripts Available
 
-### 1. `convert-to-docx.sh` (Primary Converter)
-**Created**: Commit `cf9069f` (Aug 5, 2025)
-**Purpose**: Main Markdown to DOCX converter with image support
+### 1. `convert-to-docx.sh` (Basic Converter)
+**Created**: Commit `cf906f9` (Aug 5, 2025)
+**Purpose**: Basic Markdown to DOCX converter (limited image support)
 
 **Key Command Structure**:
 ```bash
@@ -40,9 +40,11 @@ pandoc "$input_file" \
 ./convert-to-docx.sh 1-2-4-https-caddy-keycloak.md
 ```
 
-### 2. `simple-convert.sh` (Alternative Converter)
+**Note**: This script has limited image handling capabilities.
+
+### 2. `simple-convert.sh` (Image-Compatible Converter) ⭐
 **Created**: Commit `903126c` (Aug 5, 2025)
-**Purpose**: Two-step conversion via HTML for better image handling
+**Purpose**: **ONLY script that properly handles images/pictures in markdown files**
 
 **Key Command Structure**:
 ```bash
@@ -142,8 +144,8 @@ libreoffice --headless --convert-to docx 1-2-4-https-caddy-keycloak.md
 ## Recommendations
 
 ### For Future Conversions
-1. **Use `convert-to-docx.sh`** for most conversions (best image support)
-2. **Use `simple-convert.sh`** if image issues occur
+1. **Use `simple-convert.sh`** for files with images/pictures (ONLY script that works with images)
+2. **Use `convert-to-docx.sh`** only for text-only markdown files
 3. **Always test** conversion with images before committing
 4. **Keep both versions** in repository for different use cases
 
@@ -156,8 +158,8 @@ libreoffice --headless --convert-to docx 1-2-4-https-caddy-keycloak.md
 ## Conclusion
 
 The conversion commands used were:
-- **Primary**: `./convert-to-docx.sh <filename.md>`
-- **Alternative**: `./simple-convert.sh <filename.md>`
+- **For files WITH images**: `./simple-convert.sh <filename.md>` ⭐ (ONLY script that works with images)
+- **For text-only files**: `./convert-to-docx.sh <filename.md>`
 - **Manual**: `pandoc <input.md> -o <output.docx>`
 
-These scripts were created specifically for this repository's documentation needs and provide robust conversion with image support, making them ideal for technical documentation that includes screenshots and diagrams.
+**IMPORTANT**: `./simple-convert.sh` is the **ONLY** script that properly handles images/pictures in markdown files. Always use this script when converting documentation that contains screenshots, diagrams, or other images.
