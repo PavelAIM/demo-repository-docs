@@ -80,10 +80,10 @@ These numbered files are **separate from** the main evolution chain:
 - **`04-compose-setup.md`** - Docker Compose setup guide
 
 ### **What Needs Attention**
-- **`05-launch.md`** - Empty, needs content
-- **`06-access.md`** - Empty, needs content
-- **`07-automation.md`** - Empty, needs content
-- **`08-resources.md`** - Empty, needs content
+- **`05-launch.md`** - Empty, moved to bin/ directory
+- **`06-access.md`** - Empty, moved to bin/ directory
+- **`07-automation.md`** - Empty, moved to bin/ directory
+- **`08-resources.md`** - Empty, moved to bin/ directory
 
 ## Recommendations
 
@@ -93,8 +93,8 @@ These numbered files are **separate from** the main evolution chain:
 - Easy to maintain and update individual sections
 
 ### **Complete Placeholders**
-- Fill in the empty files (05-, 06-, 07-, 08-) with relevant content
-- Or remove them if not needed
+- Empty files (05-, 06-, 07-, 08-) have been moved to bin/ directory
+- Can be completed later if needed, or kept as reference for future development
 
 ### **Cross-Reference**
 - Add links between related numbered files

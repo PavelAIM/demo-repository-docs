@@ -36,6 +36,14 @@ This directory contains conversion scripts that are no longer the primary choice
 - **Size**: 8.8 MB
 - **Status**: Recreatable from markdown source
 
+## Empty Placeholder Files
+
+### `05-launch.md`, `06-access.md`, `07-automation.md`, `08-resources.md`
+- **Purpose**: Originally intended as part of modular documentation structure
+- **Status**: Empty placeholders (1 byte each)
+- **Why moved**: No content, not providing value in root directory
+- **Action**: Archived for reference - can be completed later if needed
+
 ## Current Recommendation
 
 **Use `simple-convert.sh` in the root directory** - it's the ONLY script that properly handles images/pictures in markdown files.
@@ -68,7 +76,7 @@ If you need to recreate any of the DOCX files, use the source markdown files in 
 
 ## Organization Benefits
 
-- **Root directory**: Clean, only essential scripts and source markdown files
-- **Bin directory**: Archived scripts and generated DOCX files for reference/fallback
-- **Clear separation**: Easy to understand what's current vs. archived vs. generated
-- **Source control**: Only markdown files are version controlled, DOCX files are recreatable
+- **Root directory**: Clean, only essential scripts and source markdown files with actual content
+- **Bin directory**: Archived scripts, generated DOCX files, and empty placeholders for reference/fallback
+- **Clear separation**: Easy to understand what's current vs. archived vs. generated vs. incomplete
+- **Source control**: Only markdown files with content are version controlled, DOCX files are recreatable
