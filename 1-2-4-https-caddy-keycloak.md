@@ -325,6 +325,7 @@ http://192.168.64.2/auth
                                           | (reverse proxy)
                                           v
      /auth/*  ------------------------->  OpenWebUI:8080
+     
      /realms/* ----------------------->   Keycloak:8080
                                           ^
                                           |
